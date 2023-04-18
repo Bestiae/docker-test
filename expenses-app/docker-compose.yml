@@ -1,0 +1,35 @@
+# version of the docker-compose! this is version 2 with services and depends_on.
+version: '3'
+
+services:
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-app-container
+    image: spring-boot-app:latest
+    # host:inside docker container
+    ports:
+      - '8080:8080'
+    # telling to docker, that db must start first while starting docker-compose
+    # cause' everything else is depends on db.
+    depends_on: 
+      - db
+
+  db:
+    container_name: postgres-test-2
+    image: postgres
+    ports:
+      - '5432:5432'
+    
+    # this is environment variable, which are usesed in application.
+    environment:
+      - POSTGRES_DB=expenses_app_dev
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    volumes: 
+          - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
+    
